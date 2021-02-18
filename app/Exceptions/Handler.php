@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use App\Exceptions\ExceptionTrait;
 
 class Handler extends ExceptionHandler
 {
@@ -31,10 +32,26 @@ class Handler extends ExceptionHandler
      *
      * @return void
      */
-    public function register()
+    // public function register()
+    // {
+    //     $this->reportable(function (Throwable $e) {
+    //         //
+    //     });
+    // }
+    public function report(Throwable $exception)
     {
-        $this->reportable(function (Throwable $e) {
-            //
-        });
+        parent::report($exception);
+    }
+
+
+    public function render($request, Throwable $exception)
+    {
+        if ($request->expectsJson()){
+            return $this->apiException($request,$exception);
+        }
+
+
+        //dd($exception);
+        return parent::render($request, $exception);
     }
 }
